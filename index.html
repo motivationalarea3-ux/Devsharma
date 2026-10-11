@@ -106,7 +106,11 @@ body{min-height:100svh;overflow-x:hidden;display:grid;place-items:center;positio
      const response=await fetch(WORKER_URL+'/api/create-link', {
        method:'POST',
        headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({source:'dev-the-win-landing-page', landing_page_url:window.location.href})
+      body:JSON.stringify({
+  visitor_id: crypto.randomUUID(),
+  source: 'dev-the-win-landing-page',
+  landing_page_url: window.location.href
+})
      if(!response.ok) throw new Error('Worker returned HTTP '+response.status);
      const data=await response.json();
      const generated=data.invite_link || data.inviteLink || data.url || data.link || (data.result && (data.result.invite_link || data.result.inviteLink));
@@ -118,7 +122,8 @@ body{min-height:100svh;overflow-x:hidden;display:grid;place-items:center;positio
      linkReady=true;
      timerLine.innerHTML='Opening Telegram in <span class="timer" id="timer">10</span> seconds';
      return true;
-   } catch(error) {
+   } catch(error)
+   toast.textContent = 'Tracking error: ' + (error.message || 'Unknown error');
      console.error('Tracked invite link could not be created:', error);
      link=FALLBACK_LINK;
      joinBtn.href=link;
